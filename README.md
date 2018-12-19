@@ -92,6 +92,33 @@ FROM store AS s, membership AS m, customer AS c
 WHERE (((m.custnum)=c.custnum) And ((c.level)=[Enter level (0,1,2):]) And ((s.storeID)=m.storeid));
 ```
 
+5) qryGinsengDevelopers: list of scientists/developers and the supplements they have developed
+for the Ginseng Brand.
+```
+SELECT s.snum, sFname, sLname, suppname
+FROM scientist AS sc, supp_list AS s
+WHERE sc.snum = s.snum AND brand = 'ginseng'
+ORDER BY sc.snum;
+```
+
+8) qryTotalInventoryByStore: inventory currently in stock by stores.
+```
+SELECT s.StoreID, street, city, sum(quantity) AS Total_Inventory
+FROM supp_unit AS su, store AS s
+WHERE su.storeID = s.storeID
+GROUP BY s.storeId, street, city;
+```
+
+9) qryTotalRegist%ByStore: list of total memberships with discounts (level 1 or 2 only) per store.
+Useful to see which stores are doing a better job at registering customers with discounts
+(customers with discounts pay a monthly registration fee and get extra benefits with stores).
+```
+SELECT s.storeID, s.city, s.state, count(c.level) AS TotalMemberships
+FROM customer AS c, store AS s, membership AS m
+WHERE c.custnum = m.custnum AND m.storeID = s.storeID AND c.level > '0'
+GROUP BY s.storeID, s.city, s.state
+ORDER BY count(c.level) DESC;
+```
 
 10) qryYearSalesByCustomer: total sales by customers for the current year.
 ```
@@ -135,8 +162,6 @@ c.custfname, c.custlname, c.custDOB, IIf([c].[level]='2',0.35,IIf([c].[level]='1
 WHERE total_Disc_Given > 0
 ORDER BY total_Disc_Given DESC;
 ```
-
-
 
 
 ## Login Screen
